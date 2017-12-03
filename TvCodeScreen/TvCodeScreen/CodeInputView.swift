@@ -65,7 +65,7 @@ public class CodeInputView: UIView {
      - parameter newInputButtons: new input buttons to add in view
      */
     private func addInputButtonsToView(_ newInputButtons: [InputButton]) {
-        let stackViewInputButtons = createStackViewForHorizontalElements(forViews: newInputButtons, spacingBetweenElements: 20)
+        let stackViewInputButtons = createStackViewForHorizontalElements(forViews: newInputButtons, spacingBetweenElements: 5)
         
         addSubview(stackViewInputButtons)
         
@@ -134,22 +134,6 @@ public class CodeInputView: UIView {
         }
         
         var buttons: [InputButton] = []
-        
-        for i in 0...10 {
-            guard let currentSpecification = NumericInputButtonType.pos(i).specification else {
-                continue
-            }
-            
-            let button = InputButton(
-                associatedCharacter: currentSpecification.title,
-                target: currentSpecification.target,
-                action: currentSpecification.action,
-                labelColor: buttonFontColor,
-                backgroundFocusedColor: buttonBackgroundFocusedColor
-            )
-            
-            buttons.append(button)
-        }
 
         "ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters.forEach({
             let button = InputButton(
@@ -162,6 +146,22 @@ public class CodeInputView: UIView {
 
             buttons.append(button)
         })
+
+        for i in 0...10 {
+            guard let currentSpecification = NumericInputButtonType.pos(i).specification else {
+                continue
+            }
+
+            let button = InputButton(
+                associatedCharacter: currentSpecification.title,
+                target: currentSpecification.target,
+                action: currentSpecification.action,
+                labelColor: buttonFontColor,
+                backgroundFocusedColor: buttonBackgroundFocusedColor
+            )
+
+            buttons.append(button)
+        }
         
         return buttons
     }
