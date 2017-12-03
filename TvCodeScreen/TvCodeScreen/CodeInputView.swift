@@ -150,6 +150,18 @@ public class CodeInputView: UIView {
             
             buttons.append(button)
         }
+
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters.forEach({
+            let button = InputButton(
+                associatedCharacter: $0,
+                target: self,
+                action: #selector(buttonTypeCharacter(_:)),
+                labelColor: buttonFontColor,
+                backgroundFocusedColor: buttonBackgroundFocusedColor
+            )
+
+            buttons.append(button)
+        })
         
         return buttons
     }
