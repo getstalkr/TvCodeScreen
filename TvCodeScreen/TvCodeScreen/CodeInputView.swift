@@ -39,7 +39,7 @@ public class CodeInputView: UIView {
         codeLabels = createCodeLabels(count: codeLength, labelWidth: 110, labelHeight: 120)
         addCodeLabelsToView(codeLabels)
         
-        let inputButtons = createNumericInputButtons()
+        let inputButtons = createInputButtons()
         addInputButtonsToView(inputButtons)
     }
     
@@ -109,53 +109,55 @@ public class CodeInputView: UIView {
     
     ////
     // Input buttons
-    internal func createNumericInputButtons() -> [InputButton] {
-        enum NumericInputButtonType {
-            case pos(Int)
+    internal func createInputButtons() -> [InputButton] {
+        enum InputButtonType {
+            case number(Int)
+            case letter(Character)
+            case delete()
             
-            var specification: (title: Character, target: Any, action: Selector)? {
+            var specification: (title: Character, target: Any, action: Selector) {
                 switch self {
-                case .pos(let number) where number < 10:
+                case .number(let number):
                     return (
                         title: String(number).characters.first ?? " ",
                         target: self,
                         action: #selector(buttonTypeCharacter(_:))
                     )
-                case .pos(10):
+                case .letter(let character):
+                    return (
+                        title: character,
+                        target: self,
+                        action: #selector(buttonTypeCharacter(_:))
+                    )
+                case .delete:
                     return (
                         title: "<",
                         target: self,
                         action: #selector(buttonRemoveCharacter(_:))
                     )
-                default:
-                    return nil
                 }
             }
         }
         
         var buttons: [InputButton] = []
 
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ".characters.forEach({
+        let useNumber = true
+        let useLetter = true
+
+        let specificationsNumber =
+            (useNumber) ? [Int](0...9).map { InputButtonType.number($0).specification } : []
+
+        let specificationsLetter =
+            (useLetter) ? [Int](0...25).map { InputButtonType.letter(Character(UnicodeScalar(65 + $0))).specification } : []
+
+        let specificationDelete =
+            [InputButtonType.delete().specification]
+
+        for i in specificationsLetter + specificationsNumber + specificationDelete {
             let button = InputButton(
-                associatedCharacter: $0,
-                target: self,
-                action: #selector(buttonTypeCharacter(_:)),
-                labelColor: buttonFontColor,
-                backgroundFocusedColor: buttonBackgroundFocusedColor
-            )
-
-            buttons.append(button)
-        })
-
-        for i in 0...10 {
-            guard let currentSpecification = NumericInputButtonType.pos(i).specification else {
-                continue
-            }
-
-            let button = InputButton(
-                associatedCharacter: currentSpecification.title,
-                target: currentSpecification.target,
-                action: currentSpecification.action,
+                associatedCharacter: i.title,
+                target: i.target,
+                action: i.action,
                 labelColor: buttonFontColor,
                 backgroundFocusedColor: buttonBackgroundFocusedColor
             )
